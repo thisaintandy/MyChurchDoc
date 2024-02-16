@@ -4,7 +4,6 @@ from PIL import Image, ImageTk
 import random
 import mysql.connector
 from datetime import datetime,timedelta
-from admin import AdminPage, Schedule
 import re
 from tkinter import Tk, simpledialog, messagebox, Label, PhotoImage
 
