@@ -35,7 +35,7 @@ class User():
             self.verses = [line.strip() for line in file.readlines()]
 
         self.verse_label = tk.Label(self.home_frame, text="", font=('Helvetica', 12), bg=None, wraplength=600, fg='black')
-        self.verse_label.place(relx=0.29, rely=0.86, anchor=tk.W)
+        self.verse_label.place(relx=0.29, rely=0.09, anchor=tk.W)
         self.load_images()
         self.display_next_verse()
         self.requested_materials_list = []
@@ -58,22 +58,22 @@ class User():
         self.request_button = tk.Button(self.home_frame, image=self.request_button_photo, command=self.show_request_page,
                                         bd=0, bg=None, relief=tk.FLAT, highlightthickness=0, highlightbackground=None,
                                         borderwidth=0, activebackground=None, overrelief=tk.FLAT)
-        self.request_button.place(relx=0.31, rely=0.47, anchor=tk.W)
+        self.request_button.place(relx=0.405, rely=0.40, anchor=tk.W)
 
         self.appointment_button = tk.Button(self.home_frame, image=self.appointment_button_photo, command=self.show_appointment_page,
                                              bd=0, bg=None, relief=tk.FLAT, highlightthickness=0, highlightbackground=None,
                                              borderwidth=0, activebackground=None, overrelief=tk.FLAT)
-        self.appointment_button.place(relx=0.52, rely=0.47, anchor=tk.W)
+        self.appointment_button.place(relx=0.405, rely=0.51, anchor=tk.W)
         
         self.view_requests_button = tk.Button(self.home_frame, image=self.view_requests_button_photo, command=self.open_view_requested_materials,
                                             bd=0, bg=None, relief=tk.FLAT, highlightthickness=0, highlightbackground=None,
                                             borderwidth=0, activebackground=None, overrelief=tk.FLAT)
-        self.view_requests_button.place(relx=0.31, rely=0.58, anchor=tk.W)
+        self.view_requests_button.place(relx=0.3, rely=0.77, anchor=tk.W)
 
         self.view_appointments_button = tk.Button(self.home_frame, image=self.view_appointments_button_photo, command=self.open_view_appointments,
                                                 bd=0, bg=None, relief=tk.FLAT, highlightthickness=0, highlightbackground=None,
                                                 borderwidth=0, activebackground=None, overrelief=tk.FLAT)
-        self.view_appointments_button.place(relx=0.52, rely=0.58, anchor=tk.W)
+        self.view_appointments_button.place(relx=0.50, rely=0.77, anchor=tk.W)
         
     def create_frames(self):
         self.home_frame = tk.Frame(self.root)
@@ -92,10 +92,10 @@ class User():
         self.bg_label.pack(fill=tk.BOTH, expand=True)
 
     def add_buttons_and_labels(self):
-        self.back_button1_image = Image.open("backbutton1.png")
+        self.back_button1_image = Image.open("backbutton.png")
         self.back_button1_photo = ImageTk.PhotoImage(self.back_button1_image)
 
-        self.back_button2_image = Image.open("backbutton2.png")
+        self.back_button2_image = Image.open("backbutton.png")
         self.back_button2_photo = ImageTk.PhotoImage(self.back_button2_image)
 
         self.back_button_request = tk.Button(self.request_frame, image=self.back_button1_photo, command=self.show_home_page,
@@ -156,20 +156,15 @@ class User():
         self.material_dropdown.config(font=('Times New Roman', 15))  # Set font size
         self.material_dropdown.place(relx=0.084, rely=0.68, anchor=tk.W)  # Adjust placement
         
-        self.uploadbutton = tk.PhotoImage(file="uploadbutton.png")
-        self.text_widget = tk.Button(self.request_frame, image=self.uploadbutton, fg="blue", bd=0, bg=None,
-                                relief=tk.FLAT, highlightthickness=0, highlightbackground=None, borderwidth=0,
-                                activebackground=None, overrelief=tk.FLAT,
-                                command=lambda: webbrowser.open_new("https://drive.google.com/drive/folders/1yLHrGMcd1iTXHO_KLjY76MIZJZl81Hht?usp=drive_link"))
-        self.text_widget.pack()
-        self.text_widget.place(relx=0.52, rely=0.27, anchor=tk.CENTER)
+        self.contact_entry = tk.Entry(self.request_frame, font=('Helvetica', 18))
+        self.contact_entry.place(relx=0.084, rely=0.820, anchor=tk.W)
         
         submit_button_image = tk.PhotoImage(file="submitbutton.png")
         submit_button = tk.Button(self.request_frame, image=submit_button_image, command=self.make_request, bd=0, bg=None,
                                 relief=tk.FLAT, highlightthickness=0, highlightbackground=None, borderwidth=0,
                                 activebackground=None, overrelief=tk.FLAT)
         submit_button.image = submit_button_image
-        submit_button.place(relx=0.35, rely=0.76, anchor=tk.CENTER)
+        submit_button.place(relx=0.35, rely=0.820, anchor=tk.CENTER)
         
     def show_appointment_page(self):
         self.hide_frames()
@@ -204,12 +199,23 @@ class User():
         self.appoint_dropdown.config(font=('Times New Roman', 15))  # Set font size
         self.appoint_dropdown.place(relx=0.084, rely=0.68, anchor=tk.W)  # Adjust placement
 
+        '''self.uploadbutton = tk.PhotoImage(file="uploadbutton.png")
+        self.text_widget = tk.Button(self.appointment_frame, image=self.uploadbutton, fg="blue", bd=0, bg=None,
+                                relief=tk.FLAT, highlightthickness=0, highlightbackground=None, borderwidth=0,
+                                activebackground=None, overrelief=tk.FLAT,
+                                command=lambda: webbrowser.open_new("https://drive.google.com/drive/folders/1yLHrGMcd1iTXHO_KLjY76MIZJZl81Hht?usp=drive_link"))
+        self.text_widget.pack()
+        self.text_widget.place(relx=0.52, rely=0.27, anchor=tk.CENTER)'''
+            
+        self.contact_entry = tk.Entry(self.appointment_frame, font=('Helvetica', 18))
+        self.contact_entry.place(relx=0.084, rely=0.820, anchor=tk.W)
+        
         submit_button_image = tk.PhotoImage(file="submitbutton1.png")
         submit_button = tk.Button(self.appointment_frame, image=submit_button_image, command=self.schedule_appointment, bd=0, bg=None,
                                 relief=tk.FLAT, highlightthickness=0, highlightbackground=None, borderwidth=0,
                                 activebackground=None, overrelief=tk.FLAT)
         submit_button.image = submit_button_image
-        submit_button.place(relx=0.33, rely=0.77, anchor=tk.CENTER)
+        submit_button.place(relx=0.35, rely=0.820, anchor=tk.CENTER)
 
     def show_home_page(self):
         self.request_frame.pack_forget()
@@ -260,6 +266,11 @@ class User():
                 messagebox.showerror("No Materials Selected", "Please choose first!", parent=self.request_frame)
                 return
             
+            contactno = self.contact_entry.get()
+            if not re.match("^[0-9]+$", contactno):
+                messagebox.showerror("Invalid Number", "Number should not be empty and contain only 11 numbers.")
+                return
+        
                 # Check if the same request already exists in the database
             query_check_duplicate = "SELECT * FROM request WHERE Name = %s AND Birthdate = %s AND RequestedMaterials = %s"
             self.cursor.execute(query_check_duplicate, (name, birthdate, request))
@@ -273,8 +284,8 @@ class User():
             request_code_pk = self.cursor.lastrowid
 
             # Insert request details into the request table
-            query_data = "INSERT INTO request (RequestCode, Name, Birthdate, RequestedMaterials, Status, DateRequested, AvailableDate) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-            values_data = (transaction_code, name, birthdate, request, "Processing", self.CurrentDate, self.AvailableDate)
+            query_data = "INSERT INTO request (RequestCode, Name, Birthdate, RequestedMaterials, Status, DateRequested, AvailableDate, Contactno) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            values_data = (transaction_code, name, birthdate, request, "Processing", self.CurrentDate, self.AvailableDate, contactno)
             self.cursor.execute(query_data, values_data)
             self.cnx.commit()
 
@@ -335,7 +346,10 @@ class User():
         if appointment == "->":
             messagebox.showerror("No Appointment Selected", "Please choose an appointment first!", parent=self.request_frame)
             return
-        self.uploadimage(transaction_code)
+        contactno = self.contact_entry.get()
+        if not re.match("^[0-9]+$", contactno):
+            messagebox.showerror("Invalid Number", "Number should not be empty and contain only 11 numbers.")
+            return
         try:
             # Check if the same request already exists in the database
             query_check_duplicate = "SELECT * FROM scheduledappointment WHERE Name = %s AND ScheduleDate = %s AND Appointment = %s"
@@ -349,8 +363,8 @@ class User():
                 request_code_pk = self.cursor.lastrowid
 
                 # Insert other values along with the reference to RequestCode PK into another table
-                query_data = "INSERT INTO scheduledappointment (RequestCode, DateRequested, Name, ScheduleDate, Appointment, Status) VALUES (%s, %s, %s, %s, %s, %s)"
-                values_data = (transaction_code, self.CurrentDate, name, scheduledate, appointment, "Processing", )
+                query_data = "INSERT INTO scheduledappointment (RequestCode, DateRequested, Name, ScheduleDate, Appointment, Status, Contactno) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                values_data = (transaction_code, self.CurrentDate, name, scheduledate, appointment, "Processing", contactno)
                 self.cursor.execute(query_data, values_data)
                 self.cnx.commit()
                 
@@ -470,10 +484,10 @@ class User():
 
         # Create search entry widget
         search_entry = tk.Entry(self.display_frame, font=('Helvetica', 18))
-        search_entry.place(relx=0.07, rely=0.2, anchor=tk.W)
+        search_entry.place(relx=0.072, rely=0.205, anchor=tk.W)
 
         # Create requested materials treeview
-        requested_materials_tree = ttk.Treeview(self.display_frame, columns=('Transaction Code', 'Name', 'Birthdate', 'Requested Materials', 'Status', 'DateRequested', 'AvailableDate'), show='headings', style="Custom.Treeview")
+        requested_materials_tree = ttk.Treeview(self.display_frame, columns=('Transaction Code', 'Name', 'Birthdate', 'Requested Materials', 'Status', 'DateRequested', 'AvailableDate', 'Contactno'), show='headings', style="Custom.Treeview")
         requested_materials_tree.heading('Transaction Code', text='Transaction Code')
         requested_materials_tree.heading('Name', text='Name')
         requested_materials_tree.heading('Birthdate', text='Birthdate')
@@ -481,6 +495,7 @@ class User():
         requested_materials_tree.heading('Status', text='Status')
         requested_materials_tree.heading('DateRequested', text='Date Requested')
         requested_materials_tree.heading('AvailableDate', text='Available On')
+        requested_materials_tree.heading('Contactno', text='Contact no')
         requested_materials_tree.column('Transaction Code', width=150, anchor='center')
         requested_materials_tree.column('Name', width=150, anchor='center')
         requested_materials_tree.column('Birthdate', width=150, anchor='center')
@@ -488,7 +503,8 @@ class User():
         requested_materials_tree.column('Status', width=100, anchor='center')
         requested_materials_tree.column('DateRequested', width=150, anchor='center')
         requested_materials_tree.column('AvailableDate', width=150, anchor='center')
-        requested_materials_tree.place(relx=0.07, rely=0.25, relwidth=0.85, relheight=0.6)
+        requested_materials_tree.column('Contactno', width=150, anchor='center')
+        requested_materials_tree.place(relx=0.07, rely=0.27, relwidth=0.859, relheight=0.5)
 
         # Configure tags for different statuses
         requested_materials_tree.tag_configure('Done', foreground='blue')
@@ -638,20 +654,22 @@ class User():
         search_entry.place(relx=0.07, rely=0.2, anchor=tk.W)
 
         # Create requested materials treeview
-        requested_materials_tree = ttk.Treeview(self.display_frame, columns=("RequestCode", "DateRequested", "Name", "ScheduleDate", "Appointment", "Status"), show='headings', style="Custom.Treeview")
+        requested_materials_tree = ttk.Treeview(self.display_frame, columns=("RequestCode", "DateRequested", "Name", "ScheduleDate", "Appointment", "Status", "Contactno"), show='headings', style="Custom.Treeview")
         requested_materials_tree.heading('RequestCode', text='Request Code')
         requested_materials_tree.heading('DateRequested', text='Date Requested')
         requested_materials_tree.heading('Name', text='Name')
         requested_materials_tree.heading('ScheduleDate', text='Schedule Date')
         requested_materials_tree.heading('Appointment', text='Appointment')
         requested_materials_tree.heading('Status', text='Status')
+        requested_materials_tree.heading('Contactno', text='Contact no')
         requested_materials_tree.column('RequestCode', width=150, anchor='center')
         requested_materials_tree.column('DateRequested', width=150, anchor='center')
         requested_materials_tree.column('Name', width=150, anchor='center')
         requested_materials_tree.column('ScheduleDate', width=150, anchor='center')
         requested_materials_tree.column('Appointment', width=100, anchor='center')
         requested_materials_tree.column('Status', width=150, anchor='center')
-        requested_materials_tree.place(relx=0.07, rely=0.25, relwidth=0.85, relheight=0.6)
+        requested_materials_tree.column('Contactno', width=150, anchor='center')
+        requested_materials_tree.place(relx=0.07, rely=0.27, relwidth=0.859, relheight=0.5)
 
         # Configure tags for different statuses
         requested_materials_tree.tag_configure('Done', foreground='blue')
