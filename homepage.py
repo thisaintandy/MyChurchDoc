@@ -651,7 +651,7 @@ class User():
 
         # Create search entry widget
         search_entry = tk.Entry(self.display_frame, font=('Helvetica', 18))
-        search_entry.place(relx=0.07, rely=0.2, anchor=tk.W)
+        search_entry.place(relx=0.072, rely=0.205, anchor=tk.W)
 
         # Create requested materials treeview
         requested_materials_tree = ttk.Treeview(self.display_frame, columns=("RequestCode", "DateRequested", "Name", "ScheduleDate", "Appointment", "Status", "Contactno"), show='headings', style="Custom.Treeview")
