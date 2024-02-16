@@ -6,6 +6,8 @@ import mysql.connector
 from datetime import datetime,timedelta
 import re
 from tkinter import Tk, simpledialog, messagebox, Label, PhotoImage
+from tkinter import filedialog
+import webbrowser  # Import the webbrowser module
 
 class User():
     def __init__(self, root):
@@ -38,9 +40,8 @@ class User():
         self.display_next_verse()
         self.requested_materials_list = []
         self.appointments_list = []
-
-        self.status_options = ['Done','Approved', 'Cancelled', 'Processing']
         
+        self.status_options = ['Done','Approved', 'Cancelled', 'Processing']
         
         self.request_button_image = Image.open("requestbutton1.png")
         self.request_button_photo = ImageTk.PhotoImage(self.request_button_image)
@@ -122,6 +123,9 @@ class User():
             self.verses = [line.strip() for line in open("verses.txt", "r", encoding="utf-8").readlines()]
             self.root.after(10000, self.display_next_verse)
 
+    def open_link(self, event):
+        webbrowser.open_new("https://drive.google.com/drive/folders/1yLHrGMcd1iTXHO_KLjY76MIZJZl81Hht?usp=drive_link")
+
     def show_request_page(self):
         self.hide_frames()
         self.request_frame.pack(fill=tk.BOTH, expand=True)
@@ -135,7 +139,6 @@ class User():
         self.name_entry.place(relx=0.084, rely=0.41, anchor=tk.W)
         self.birthdate_entry = tk.Entry(self.request_frame, font=('Helvetica', 18))
         self.birthdate_entry.place(relx=0.084, rely=0.55, anchor=tk.W)
- 
         
         # Create a dropdown menu for requested materials
         self.selected_material = tk.StringVar(self.request_frame)
@@ -143,13 +146,23 @@ class User():
         self.materials_options = [
                 "Church Catalog",
                 "Baptismal Certificate",
+                "Confirmation Certificate",
+                "Confession Certificate",
+                "Good Moral Certificate",
                 "Ordination Certificate",
-                "Membership Certificate",
                 "Catechism Certificate"
             ]
         self.material_dropdown = tk.OptionMenu(self.request_frame, self.selected_material, *self.materials_options)
         self.material_dropdown.config(font=('Times New Roman', 15))  # Set font size
         self.material_dropdown.place(relx=0.084, rely=0.68, anchor=tk.W)  # Adjust placement
+        
+        self.uploadbutton = tk.PhotoImage(file="uploadbutton.png")
+        self.text_widget = tk.Button(self.request_frame, image=self.uploadbutton, fg="blue", bd=0, bg=None,
+                                relief=tk.FLAT, highlightthickness=0, highlightbackground=None, borderwidth=0,
+                                activebackground=None, overrelief=tk.FLAT,
+                                command=lambda: webbrowser.open_new("https://drive.google.com/drive/folders/1yLHrGMcd1iTXHO_KLjY76MIZJZl81Hht?usp=drive_link"))
+        self.text_widget.pack()
+        self.text_widget.place(relx=0.52, rely=0.27, anchor=tk.CENTER)
         
         submit_button_image = tk.PhotoImage(file="submitbutton.png")
         submit_button = tk.Button(self.request_frame, image=submit_button_image, command=self.make_request, bd=0, bg=None,
@@ -175,8 +188,14 @@ class User():
         self.selected_appoint = tk.StringVar(self.request_frame)
         self.selected_appoint.set("->")  # Set default text
         self.appoint_options = [
-                "Marriage",
+                "Wedding",
+                "Wake",
+                "King of the Sick",
+                "Mass for Death Anniversary",
+                "Car Blessing",
                 "Baptismal",
+                "Marriage Seminar",
+                "Catisism",
                 "House Blessing",
                 "Funeral Service",
                 "Confession"
@@ -228,17 +247,19 @@ class User():
             if not re.match("^[a-zA-Z ]+$", name):
                 messagebox.showerror("Invalid Name", "Name should contain only letters.")
                 return
-            
             # Check if the birthdate follows the format year-month-day
             if not re.match("^\\d{4}-\\d{2}-\\d{2}$", birthdate):
                 messagebox.showerror("Invalid Birthdate", "Birthdate should be in the format YYYY-MM-DD.")
+                return
+            elif birthdate > self.CurrentDate.strftime("%Y-%m-%d"):
+                messagebox.showerror("Invalid Date", "Wow, you must be a Time Traveller")
                 return
             request = self.selected_material.get()
             
             if request == "->":
                 messagebox.showerror("No Materials Selected", "Please choose first!", parent=self.request_frame)
                 return
-
+            
                 # Check if the same request already exists in the database
             query_check_duplicate = "SELECT * FROM request WHERE Name = %s AND Birthdate = %s AND RequestedMaterials = %s"
             self.cursor.execute(query_check_duplicate, (name, birthdate, request))
@@ -247,12 +268,7 @@ class User():
             if existing_request:
                 messagebox.showerror("Duplicate Request", "This request already exists.")
                 return
-
-            # Insert RequestCode into the status table
-            query_request_code = "INSERT INTO status (RequestStatus, DateRequested, RequestCode, AvailableDate) VALUES (%s, %s, %s, %s)"
-            self.cursor.execute(query_request_code, ("Processing", self.CurrentDate, transaction_code, self.AvailableDate))
-            self.cnx.commit()
-
+            
             # Get the auto-generated primary key (PK) of the inserted row
             request_code_pk = self.cursor.lastrowid
 
@@ -319,7 +335,7 @@ class User():
         if appointment == "->":
             messagebox.showerror("No Appointment Selected", "Please choose an appointment first!", parent=self.request_frame)
             return
-
+        self.uploadimage(transaction_code)
         try:
             # Check if the same request already exists in the database
             query_check_duplicate = "SELECT * FROM scheduledappointment WHERE Name = %s AND ScheduleDate = %s AND Appointment = %s"
@@ -334,10 +350,10 @@ class User():
 
                 # Insert other values along with the reference to RequestCode PK into another table
                 query_data = "INSERT INTO scheduledappointment (RequestCode, DateRequested, Name, ScheduleDate, Appointment, Status) VALUES (%s, %s, %s, %s, %s, %s)"
-                values_data = (transaction_code, self.CurrentDate, name, scheduledate, appointment, "Processing")
+                values_data = (transaction_code, self.CurrentDate, name, scheduledate, appointment, "Processing", )
                 self.cursor.execute(query_data, values_data)
                 self.cnx.commit()
-
+                
                 print("Values inserted successfully!")
 
                 user_input_text = f"Name: {name}\nAppointment: {appointment}\nSchedule Date Requested: {scheduledate}\nTransaction Code: {transaction_code}\n"
@@ -465,13 +481,13 @@ class User():
         requested_materials_tree.heading('Status', text='Status')
         requested_materials_tree.heading('DateRequested', text='Date Requested')
         requested_materials_tree.heading('AvailableDate', text='Available On')
-        requested_materials_tree.column('Transaction Code', width=150)
-        requested_materials_tree.column('Name', width=150)
-        requested_materials_tree.column('Birthdate', width=150)
-        requested_materials_tree.column('Requested Materials', width=150)
+        requested_materials_tree.column('Transaction Code', width=150, anchor='center')
+        requested_materials_tree.column('Name', width=150, anchor='center')
+        requested_materials_tree.column('Birthdate', width=150, anchor='center')
+        requested_materials_tree.column('Requested Materials', width=150, anchor='center')
         requested_materials_tree.column('Status', width=100, anchor='center')
-        requested_materials_tree.column('DateRequested', width=150)
-        requested_materials_tree.column('AvailableDate', width=150)
+        requested_materials_tree.column('DateRequested', width=150, anchor='center')
+        requested_materials_tree.column('AvailableDate', width=150, anchor='center')
         requested_materials_tree.place(relx=0.07, rely=0.25, relwidth=0.85, relheight=0.6)
 
         # Configure tags for different statuses
@@ -629,12 +645,12 @@ class User():
         requested_materials_tree.heading('ScheduleDate', text='Schedule Date')
         requested_materials_tree.heading('Appointment', text='Appointment')
         requested_materials_tree.heading('Status', text='Status')
-        requested_materials_tree.column('RequestCode', width=150)
-        requested_materials_tree.column('DateRequested', width=150)
-        requested_materials_tree.column('Name', width=150)
-        requested_materials_tree.column('ScheduleDate', width=150)
+        requested_materials_tree.column('RequestCode', width=150, anchor='center')
+        requested_materials_tree.column('DateRequested', width=150, anchor='center')
+        requested_materials_tree.column('Name', width=150, anchor='center')
+        requested_materials_tree.column('ScheduleDate', width=150, anchor='center')
         requested_materials_tree.column('Appointment', width=100, anchor='center')
-        requested_materials_tree.column('Status', width=150)
+        requested_materials_tree.column('Status', width=150, anchor='center')
         requested_materials_tree.place(relx=0.07, rely=0.25, relwidth=0.85, relheight=0.6)
 
         # Configure tags for different statuses
@@ -679,7 +695,6 @@ class User():
                                 activebackground=None, overrelief=tk.FLAT)
         search_button.image = search_button_image
         search_button.place(relx=0.3, rely=0.2, anchor=tk.W)
-
         
 if __name__ == "__main__":
     root = tk.Tk()
